@@ -8,6 +8,9 @@ const httpServer = createServer(app);
 const io = new Server(httpServer);
 const rooms = new Map();
 app.use(express.static('public'));
+// Accept artwork placed either in public/assets (deployment) or assets
+// beside this server (local checkouts made before the public folder existed).
+app.use('/assets', express.static('assets'));
 app.get('/health', (_, res) => res.json({ ok: true, rooms: rooms.size }));
 // This server-side proxy avoids browser CORS restrictions and preserves every
 // WordPress taxonomy (including sequencing_generation and conservation-status).
