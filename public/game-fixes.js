@@ -17,6 +17,7 @@ window.viewGridCell = function (index) {
   for (const [owner, state] of Object.entries(room.game.players)) {
     for (const card of state.grid?.[index] || []) cards.push({ owner, card });
   }
+  cards.sort((a, b) => cardLayer(b.card, index) - cardLayer(a.card, index));
   modalBody.innerHTML = `<h2>Cards in this cell (${cards.length})</h2><div class="modal-cards">${cards.map(({owner, card}) => `<button class="card ${owner===me?'own-card':''}" onclick="openGridCard('${owner}',${index},'${card.id}')"><img src="${card.image || ''}" alt=""><span>${card.title}</span></button>`).join('') || '<p>No cards here.</p>'}</div>`;
   modal.showModal();
 };
