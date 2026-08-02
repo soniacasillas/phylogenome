@@ -72,6 +72,10 @@ window.cellAction = function (index) {
   viewGridCell(index);
 };
 
+window.doUndo = function () {
+  socket.emit('game:undo', { code: room.code }, result => { if (!result?.ok) alert(result?.error || 'Nothing to undo.'); });
+};
+
 /* Center the fresh 20 x 20 board on row 10 / columns 9-10. */
 new MutationObserver(() => requestAnimationFrame(() => {
   const grid = document.querySelector('.grid');
@@ -79,5 +83,25 @@ new MutationObserver(() => requestAnimationFrame(() => {
   grid.dataset.centered = 'yes';
   grid.scrollLeft = Math.max(0, 9 * 92 - grid.clientWidth / 2);
   grid.scrollTop = Math.max(0, 9 * 129 - grid.clientHeight / 2);
+})).observe(app, { childList: true, subtree: true });
+
+new MutationObserver(() => requestAnimationFrame(() => {
+  const roomTitle = [...app.querySelectorAll('h1')].find(h => h.textContent.startsWith('Room '));
+  if (roomTitle && !roomTitle.querySelector('.copy-code')) {
+    const code = roomTitle.textContent.replace('Room ', '').trim();
+    const button = document.createElement('button');
+    button.className = 'copy-code'; button.type = 'button'; button.title = 'Copy room code'; button.textContent = 'Copy';
+    button.onclick = async () => { await navigator.clipboard.writeText(code); button.textContent = 'Copied'; setTimeout(() => button.textContent = 'Copy', 1400); };
+    roomTitle.append(' ', button);
+  }
+  const help = app.querySelector('.help');
+  if (help && room?.game) {
+    help.classList.toggle('waiting', room.game.turn !== me);
+    if (room.game.turn === me && room.game.step === 2 && !help.querySelector('.action-hint')) {
+      const hint = document.createElement('small'); hint.className = 'action-hint'; hint.textContent = 'Actions: discard one card to draw three; play a species card; move up to two species cards; or play an event card.'; help.append(hint);
+    }
+  }
+  const countButton = [...app.querySelectorAll('button')].find(button => button.textContent.trim() === 'End of game');
+  if (countButton) { countButton.textContent = 'Count points'; countButton.classList.remove('secondary'); }
 })).observe(app, { childList: true, subtree: true });
 
