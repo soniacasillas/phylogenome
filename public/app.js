@@ -11,14 +11,13 @@ document.querySelector('#create').onclick=()=>openForm('create'); document.query
 function openForm(mode){ modalBody.innerHTML = mode==='create' ? `<h2>Create a game room</h2><label class="field">Your name<input id="name" required maxlength="24"></label><label class="field">Edition<select id="edition"><option value="genome">Genome Edition</option><option value="extinction">Extinction Edition</option></select></label><button value="default" id="send">Create room</button>` : `<h2>Join a game room</h2><label class="field">Your name<input id="name" required maxlength="24"></label><label class="field">Room code<input id="code" required maxlength="6" style="text-transform:uppercase"></label><button value="default" id="send">Join room</button>`; modal.showModal(); document.querySelector('#send').onclick=(e)=>{e.preventDefault(); const name=document.querySelector('#name').value; const event=mode==='create'?'room:create':'room:join'; const data=mode==='create'?{name,edition:document.querySelector('#edition').value}:{name,code:document.querySelector('#code').value}; socket.emit(event,data,res=>{if(!res.ok)return alert(res.error); room=res.room;me=res.playerId;modal.close();render();});}; }
 async function loadCards(){
   if(cards.length)return cards;
-  // Uses WordPress's public REST API only; no account or database credential is needed.
-  const api='https://phylogenome.omicsuab.org/wp-json/wp/v2';
-  try { const r=await fetch(`${api}/posts?per_page=100&_embed=1`); if(!r.ok)throw 0; const posts=await r.json(); cards=posts.map(p=>({id:'wp-'+p.id,title:p.title.rendered.replace(/<[^>]*>/g,''),image:p._embedded?.['wp:featuredmedia']?.[0]?.source_url||'',tags:(p._embedded?.['wp:term']?.flat()?.filter(x=>x.taxonomy==='post_tag').map(x=>x.name)||[]).join(' '),categories:(p._embedded?.['wp:term']?.flat()?.filter(x=>x.taxonomy==='category').map(x=>x.name)||[]).join(' ')})); }
+  // The local server fetches WordPress, so the browser never needs WordPress CORS permission.
+  try { const r=await fetch('/api/cards'); if(!r.ok)throw new Error((await r.json()).detail); cards=(await r.json()).cards; }
   catch { cards=[]; }
   return cards;
 }
-function kind(card){ const s=(card.categories+' '+card.tags+' '+card.title).toLowerCase(); return s.includes('progress')?'progress':s.includes('event')?'event':'species'; }
-function tag(card, value){ return (card.tags+' '+card.title).toLowerCase().includes(value.toLowerCase()); }
+function kind(card){ const s=(card.categories+' '+card.terms+' '+card.title).toLowerCase(); return s.includes('progress')?'progress':s.includes('event')?'event':'species'; }
+function tag(card, value){ return (card.terms+' '+card.title).toLowerCase().includes(value.toLowerCase()); }
 function requirement(){const r=rules[room.edition];let out=[];r.progress.forEach((x,i)=>out.push({kind:'progress',tag:x,n:1,label:`Progress ${x}`}));out.push({kind:'event',n:10,label:'Event cards'});r.species.forEach((n,i)=>out.push({kind:'species',tag:r.progress[i],n,label:`Species ${r.progress[i]}`}));return out;}
 function counts(){return requirement().map(q=>({...q,got:selection.filter(c=>kind(c)===q.kind&&(!q.tag||tag(c,q.tag))).length}));}
 function valid(){return counts().every(x=>x.got===x.n);}
