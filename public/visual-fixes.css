@@ -14,5 +14,10 @@
 /* Keep the red ownership/selection frame exactly card-shaped. */
 .own-card, .card-list .card.selected { padding: 0 !important; outline: 4px solid #d71920; outline-offset: 0; box-shadow: none !important; background: #d71920; }
 .hand .game-card img, .modal-cards .card img, .card-list .card.selected img { width: 100%; height: 100%; display: block; object-fit: cover; }
+
+/* Ownership is shown by a small red corner tab, never by a card border. */
+.own-card, .card-list .card.selected { background: #fff !important; border-color: #bbb !important; outline: 0 !important; box-shadow: none !important; position: relative; }
+.grid .own-card { background: #fff !important; box-shadow: none !important; }
+.own-card::after, .card-list .card.selected::after { content: ""; position: absolute; width: 18px; height: 18px; right: 0; bottom: 0; background: #d71920; clip-path: polygon(100% 0, 100% 100%, 0 100%); z-index: 5; pointer-events: none; }
 .game-card:not(.own-card), .modal-cards .card:not(.own-card) { border-color: transparent; box-shadow: none; }
 
