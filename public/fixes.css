@@ -11,3 +11,21 @@
 .card-list .card img { width: 100%; height: 100%; object-fit: contain; }
 .card-list .card span { display: none; }
 
+.loading { height: 10px; overflow: hidden; border-radius: 99px; background: #d9d1c1; margin: 10px 0 8px; }
+.loading span { display: block; width: 42%; height: 100%; border-radius: inherit; background: var(--teal); animation: loading 1.2s ease-in-out infinite; }
+@keyframes loading { 0% { transform: translateX(-110%); } 100% { transform: translateX(360%); } }
+.zone { display: grid; gap: 8px; align-content: start; }
+.zone button { width: 100%; padding: .45em .6em; font-size: .82rem; }
+.hand { display: grid; grid-template-columns: repeat(5, minmax(105px, 1fr)); align-items: start; overflow: visible; }
+.hand .game-card { min-width: 0; aspect-ratio: 1313 / 1838; }
+.hand .game-card img { width: 100%; height: 100%; object-fit: contain; }
+.hand .game-card span { display: none; }
+.grid .mini { width: 100%; height: 100%; overflow: hidden; }
+.grid .mini img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.modal-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; max-height: 60vh; overflow: auto; }
+.modal-cards .card { aspect-ratio: 1313 / 1838; }
+.modal-cards .card img, .card-preview { width: 100%; height: auto; object-fit: contain; }
+.modal-cards .card span { display: none; }
+.card-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+@media (max-width: 750px) { .hand { grid-template-columns: repeat(3, minmax(90px, 1fr)); } }
+
