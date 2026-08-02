@@ -80,7 +80,17 @@ io.on('connection', socket => {
     const room = rooms.get(roomCode); if (!room?.players[socket.id] || !room.started) return;
     // The client only submits its own zones. The server preserves the opponent's private hand/deck.
     const mine = game.players?.[socket.id]; if (!mine) return;
-    room.game.players[socket.id] = mine; room.game.turn = game.turn; room.game.log = (game.log || []).slice(-30);
+    room.game.players[socket.id] = mine;
+    // A card effect may discard or otherwise affect an opponent's public zones.
+    // Preserve private hands and decks while accepting those public-zone changes.
+    for (const [id, incoming] of Object.entries(game.players || {})) if (id !== socket.id && room.game.players[id]) {
+      room.game.players[id].discard = incoming.discard || room.game.players[id].discard;
+      room.game.players[id].inPlay = incoming.inPlay || room.game.players[id].inPlay;
+      room.game.players[id].grid = incoming.grid || room.game.players[id].grid;
+    }
+    room.game.turn = game.turn;
+    room.game.step = Number.isInteger(game.step) ? game.step : room.game.step;
+    room.game.log = (game.log || []).slice(-30);
     emit(room); done?.({ ok: true });
   });
   socket.on('disconnect', () => {
@@ -91,12 +101,13 @@ function shuffle(a) { return [...a].sort(() => Math.random() - .5); }
 function initialGame(room) {
   const players = {};
   for (const p of Object.values(room.players)) {
-    const progress = p.deck.filter(c => c.kind === 'progress');
-    const other = shuffle(p.deck.filter(c => c.kind !== 'progress'));
+    const isProgress = c => (c.categories || '').toLowerCase().includes('progress cards');
+    const progress = p.deck.filter(isProgress);
+    const other = shuffle(p.deck.filter(c => !isProgress(c)));
     const starting = progress.shift();
-    players[p.id] = { hand: other.splice(0, 5), deck: other, discard: [], progress, grid: starting ? { 210: [starting] } : {}, selected: null };
+    players[p.id] = { hand: other.splice(0, 5), deck: other, discard: [], progress, inPlay: [], grid: starting ? { 210: [starting] } : {}, selected: null };
   }
-  return { players, turn: Object.keys(players)[0], log: ['Game started.'] };
+  return { players, turn: Object.keys(players)[0], step: 0, log: ['Game started.'] };
 }
 const port = process.env.PORT || 3000;
 httpServer.listen(port, () => console.log(`PhyloGenome online at http://localhost:${port}`));
