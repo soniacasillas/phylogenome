@@ -20,5 +20,8 @@
 .grid .own-card { background: #fff !important; box-shadow: none !important; }
 .own-card::after, .card-list .card.selected::after { content: ""; position: absolute; width: 33.333%; aspect-ratio: 1 / 1; right: 0; bottom: 0; background: #d71920; clip-path: polygon(100% 0, 100% 100%, 0 100%); z-index: 5; pointer-events: none; }
 .grid .cell.own-card { border-color: #bbb !important; background: #fff !important; box-shadow: none !important; }
+
+/* Stack count: a grey lower-left tab, distinct from the artwork on the cards. */
+.grid .count { top: auto; right: auto; left: 0; bottom: 0; width: 33.333%; aspect-ratio: 1 / 1; padding: 0 0 3px 3px; border-radius: 0; background: #c9c9c9; color: #111; clip-path: polygon(0 0, 100% 100%, 0 100%); display: flex; align-items: flex-end; justify-content: flex-start; font-size: 12px; font-weight: 900; line-height: 1; z-index: 6; }
 .game-card:not(.own-card), .modal-cards .card:not(.own-card) { border-color: transparent; box-shadow: none; }
 
