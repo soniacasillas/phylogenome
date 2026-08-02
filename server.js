@@ -86,6 +86,7 @@ io.on('connection', socket => {
     for (const [id, incoming] of Object.entries(game.players || {})) if (id !== socket.id && room.game.players[id]) {
       room.game.players[id].discard = incoming.discard || room.game.players[id].discard;
       room.game.players[id].inPlay = incoming.inPlay || room.game.players[id].inPlay;
+      room.game.players[id].progress = incoming.progress || room.game.players[id].progress;
       room.game.players[id].grid = incoming.grid || room.game.players[id].grid;
     }
     room.game.turn = game.turn;
