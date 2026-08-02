@@ -29,3 +29,13 @@
 .card-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
 @media (max-width: 750px) { .hand { grid-template-columns: repeat(3, minmax(90px, 1fr)); } }
 
+/* The table uses card-shaped cells, not tiny generic squares. */
+.grid { grid-template-columns: repeat(20, 92px); grid-auto-rows: 129px; max-height: 72vh; }
+.cell { min-width: 92px; width: 92px; height: 129px; padding: 0; overflow: hidden; }
+.grid .mini, .grid .mini img { width: 100%; height: 100%; }
+.grid .mini img { object-fit: cover; }
+.board > aside.opponent { transform: none; }
+.grid .mini.opponent { transform: rotate(180deg); }
+.grid.zoomed { grid-template-columns: repeat(20, 130px); grid-auto-rows: 182px; max-height: 78vh; }
+.grid.zoomed .cell { min-width: 130px; width: 130px; height: 182px; }
+
