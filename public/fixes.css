@@ -5,4 +5,9 @@
 .card-group h3 span { color: #687b8e; font-size: .8rem; font-weight: 500; }
 .card-group .card-list { max-height: none; overflow: visible; }
 .card-group .card { align-self: start; }
+/* The published card artwork is 1313 x 1838 px. In the catalogue, show it
+   as the complete card rather than extending the tile with a text footer. */
+.card-list .card { aspect-ratio: 1313 / 1838; }
+.card-list .card img { width: 100%; height: 100%; object-fit: contain; }
+.card-list .card span { display: none; }
 
