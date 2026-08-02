@@ -32,7 +32,7 @@ app.get('/api/cards', async (_, res) => {
         title: post.title?.rendered?.replace(/<[^>]*>/g, '') || 'Untitled card',
         image: post._embedded?.['wp:featuredmedia']?.[0]?.source_url || post.jetpack_featured_media_url || '',
         categories: Object.values(terms).filter(t => t.taxonomy === 'category').map(t => t.name).join(' '),
-        terms: Object.values(terms).map(t => `${t.taxonomy}:${t.name}`).join(' ')
+        terms: Object.values(terms).map(t => `${t.taxonomy}:${t.name}`).join(' | ')
       };
     });
     res.json({ cards, total: cards.length });
