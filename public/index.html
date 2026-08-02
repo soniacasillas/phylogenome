@@ -1,6 +1,19 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PhyloGenome Play Online</title><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="fixes.css"></head><body>
-<header><a href="#" class="brand">PHYLOGENOME <small>PLAY ONLINE</small></a><span id="status">Connectingâ€¦</span></header>
-<main id="app"><section class="hero"><p class="eyebrow">Collaborative evolution card game</p><h1>Play PhyloGenome<br>across the table - online.</h1><p>Build your deck from the live PhyloGenome card catalogue, then play face to face from your own perspective.</p><div class="actions"><button id="create">Create a room</button><button class="secondary" id="join">Join with a code</button></div></section></main>
-<dialog id="modal"><form method="dialog"><button class="close">&times;</button><div id="modalBody"></div></form></dialog>
-<script src="/socket.io/socket.io.js"></script><script src="app.js"></script><script src="game-fixes.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PhyloGenome Play Online</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="fixes.css">
+  <link rel="stylesheet" href="theme.css">
+</head>
+<body>
+  <header><a href="#" class="brand"><img src="assets/icon.png" alt="PhyloGenome"><span>PHYLOGENOME <small>PLAY ONLINE</small></span></a><span id="status">Connecting...</span></header>
+  <main id="app"><section class="hero"><p class="eyebrow">Collaborative evolution card game</p><h1>Play PhyloGenome<br>across the table - online.</h1><p>Build your deck from the live PhyloGenome card catalogue, then play face to face from your own perspective.</p><div class="actions"><button id="create">Create a room</button><button class="secondary" id="join">Join with a code</button></div></section></main>
+  <footer><a href="https://phylogenome.omicsuab.org" target="_blank" rel="noreferrer">PhyloGenome website</a><a href="https://instagram.com/phylogenome/" target="_blank" rel="noreferrer">Instagram</a><a href="mailto:sonia.casillas@uab.cat">sonia.casillas@uab.cat</a></footer>
+  <dialog id="modal"><form method="dialog"><button class="close">&times;</button><div id="modalBody"></div></form></dialog>
+  <script src="/socket.io/socket.io.js"></script><script src="app.js"></script><script src="game-fixes.js"></script>
+</body>
+</html>
 
