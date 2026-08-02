@@ -1,5 +1,7 @@
 .grid { background: #fff; }
+.cell { background: #fff; border: 1px solid #bbb; }
 .hand { background: #e5e5e5; }
 .own-card { border-color: #d71920 !important; box-shadow: 0 0 0 2px #d71920 !important; }
 .grid .own-card { box-shadow: inset 0 0 0 3px #d71920 !important; }
+.game-card:not(.own-card), .modal-cards .card:not(.own-card) { border-color: transparent; box-shadow: none; }
 
