@@ -78,6 +78,8 @@ io.on('connection', socket => {
   });
   socket.on('game:update', ({ code: roomCode, game }, done) => {
     const room = rooms.get(roomCode); if (!room?.players[socket.id] || !room.started) return;
+    const snapshot = structuredClone(room.game); snapshot.history = [];
+    room.game.history = [...(room.game.history || []), snapshot].slice(-30);
     // The client only submits its own zones. The server preserves the opponent's private hand/deck.
     const mine = game.players?.[socket.id]; if (!mine) return;
     room.game.players[socket.id] = mine;
@@ -92,6 +94,14 @@ io.on('connection', socket => {
     room.game.turn = game.turn;
     room.game.step = Number.isInteger(game.step) ? game.step : room.game.step;
     room.game.log = (game.log || []).slice(-30);
+    emit(room); done?.({ ok: true });
+  });
+  socket.on('game:undo', ({ code: roomCode }, done) => {
+    const room = rooms.get(roomCode); if (!room?.players[socket.id] || !room.started) return;
+    const history = room.game.history || [], previous = history.pop();
+    if (!previous) return done?.({ ok: false, error: 'Nothing to undo.' });
+    previous.history = history;
+    room.game = previous;
     emit(room); done?.({ ok: true });
   });
   socket.on('disconnect', () => {
@@ -114,7 +124,7 @@ function initialGame(room) {
     const progressCell = position === 0 ? 188 : 189;
     players[p.id] = { hand: other.splice(0, 5), deck: other, discard: [], progress, inPlay: [], grid: starting ? { [progressCell]: [starting] } : {}, selected: null };
   }
-  return { players, turn: Object.keys(players)[0], step: 0, log: ['Game started.'] };
+  return { players, turn: Object.keys(players)[0], step: 0, log: ['Game started.'], history: [] };
 }
 const port = process.env.PORT || 3000;
 httpServer.listen(port, () => console.log(`PhyloGenome online at http://localhost:${port}`));
