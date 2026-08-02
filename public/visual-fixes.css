@@ -5,5 +5,10 @@
 .grid .own-card { background: #d71920 !important; box-shadow: inset 0 0 0 6px #d71920 !important; }
 .grid .own-card .mini { background: #d71920; padding: 5px; }
 .board > aside:first-child .zone { background: #e5e5e5; }
+.edition-choice.selected { background: #d71920 !important; border-color: #d71920 !important; box-shadow: 0 0 0 3px #d71920 !important; padding: 5px; }
+.edition-choice.selected span { color: #fff; }
+.card-list .card.selected { background: #d71920; border-color: #d71920 !important; box-shadow: 0 0 0 3px #d71920 !important; padding: 5px; }
+.game > h2 { background: #e5e5e5; border: 2px solid #bbb; border-bottom: 0; border-radius: 10px 10px 0 0; margin: 18px 0 0; padding: 10px 12px; }
+.game > h2 + .hand { border: 2px solid #bbb; border-top: 0; border-radius: 0 0 10px 10px; margin: 0; padding: 12px; }
 .game-card:not(.own-card), .modal-cards .card:not(.own-card) { border-color: transparent; box-shadow: none; }
 
