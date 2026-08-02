@@ -1,0 +1,83 @@
+/* Interaction refinements for the shared table. */
+window.openCard = function (owner, zone, id) {
+  const state = stateFor(owner), card = (state?.[zone] || []).find(c => c.id === id);
+  if (!card) return;
+  const own = owner === 'me' || owner === me;
+  const actions = isProgressCard(card)
+    ? (zone === 'progress' && own ? `<button onclick="play('${zone}','${id}')">Play</button>` : '')
+    : own
+      ? `<button onclick="toHand('${zone}','${id}')">Draw</button><button onclick="discard('${owner}','${zone}','${id}')">Discard</button><button onclick="play('${zone}','${id}')">Play</button><button onclick="move('${zone}','${id}')">Move</button>`
+      : `<button onclick="discard('${owner}','${zone}','${id}')">Discard</button>`;
+  modalBody.innerHTML = `<h2>${card.title}</h2><img class="card-preview" src="${card.image || ''}" alt=""><div class="card-actions">${actions}</div>`;
+  modal.showModal();
+};
+
+window.viewGridCell = function (index) {
+  const cards = [];
+  for (const [owner, state] of Object.entries(room.game.players)) {
+    for (const card of state.grid?.[index] || []) cards.push({ owner, card });
+  }
+  modalBody.innerHTML = `<h2>Cards in this cell (${cards.length})</h2><div class="modal-cards">${cards.map(({owner, card}) => `<button class="card" onclick="openGridCard('${owner}',${index},'${card.id}')"><img src="${card.image || ''}" alt=""><span>${card.title}</span></button>`).join('') || '<p>No cards here.</p>'}</div>`;
+  modal.showModal();
+};
+
+window.openGridCard = function (owner, index, id) {
+  const state = stateFor(owner), card = (state.grid?.[index] || []).find(c => c.id === id);
+  if (!card) return;
+  const own = owner === me;
+  const zone = `grid:${index}`;
+  const actions = isProgressCard(card)
+    ? `<button onclick="returnProgress('${owner}',${index},'${id}')">Discard</button>`
+    : own
+      ? `<button onclick="toHand('${zone}','${id}')">Draw</button><button onclick="discardGridCell(${index})">Discard</button><button onclick="play('${zone}','${id}')">Play</button><button onclick="moveGridCell(${index})">Move</button>`
+      : `<button onclick="discardGridCell(${index})">Discard</button>`;
+  modalBody.innerHTML = `<h2>${card.title}</h2><img class="card-preview" src="${card.image || ''}" alt=""><div class="card-actions">${actions}</div>`;
+  modal.showModal();
+};
+
+window.returnProgress = function (owner, index, id) {
+  const state = stateFor(owner), card = take(state, `grid:${index}`, id);
+  if (!card) return;
+  if (owner === me) clone();
+  (state.progress ??= []).push(card);
+  modal.close();
+  sync('A progress card returned to its progress pile.');
+};
+
+window.moveGridCell = function (index) {
+  mine().selected = { zone: `grid:${index}`, all: true };
+  modal.close();
+  board();
+};
+
+window.cellAction = function (index) {
+  const selected = mine().selected;
+  if (selected) {
+    const reserved = [188, 189];
+    if (reserved.includes(index)) { alert('Only progress cards can be placed in the two central progress cells.'); return; }
+    clone();
+    if (selected.all) {
+      for (const state of Object.values(room.game.players)) {
+        const stack = state.grid?.[Number(selected.zone.slice(5))] || [];
+        if (stack.length) { state.grid[Number(selected.zone.slice(5))] = []; (state.grid[index] ??= []).push(...stack); }
+      }
+    } else {
+      const card = take(mine(), selected.zone, selected.id);
+      if (card) (mine().grid[index] ??= []).push(card);
+    }
+    mine().selected = null;
+    sync('Cards were moved on the board.');
+    return;
+  }
+  viewGridCell(index);
+};
+
+/* Center the fresh 20 x 20 board on row 10 / columns 9-10. */
+new MutationObserver(() => requestAnimationFrame(() => {
+  const grid = document.querySelector('.grid');
+  if (!grid || grid.dataset.centered) return;
+  grid.dataset.centered = 'yes';
+  grid.scrollLeft = Math.max(0, 9 * 92 - grid.clientWidth / 2);
+  grid.scrollTop = Math.max(0, 9 * 129 - grid.clientHeight / 2);
+})).observe(app, { childList: true, subtree: true });
+
