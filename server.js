@@ -100,12 +100,18 @@ io.on('connection', socket => {
 function shuffle(a) { return [...a].sort(() => Math.random() - .5); }
 function initialGame(room) {
   const players = {};
-  for (const p of Object.values(room.players)) {
+  const ids = Object.keys(room.players);
+  for (const [position, id] of ids.entries()) {
+    const p = room.players[id];
     const isProgress = c => (c.categories || '').toLowerCase().includes('progress cards');
     const progress = p.deck.filter(isProgress);
     const other = shuffle(p.deck.filter(c => !isProgress(c)));
-    const starting = progress.shift();
-    players[p.id] = { hand: other.splice(0, 5), deck: other, discard: [], progress, inPlay: [], grid: starting ? { 210: [starting] } : {}, selected: null };
+    const isStartingProgress = c => /sequencing_generation:(?:[^|]*\b1\b)|conservation-status:(?:[^|]*(?:\bCR\b|Critically Endangered))/i.test(c.terms || '');
+    const startIndex = progress.findIndex(isStartingProgress);
+    const starting = startIndex >= 0 ? progress.splice(startIndex, 1)[0] : progress.shift();
+    // Row 10, columns 9 and 10 in the 20 x 20 board (zero-indexed 188, 189).
+    const progressCell = position === 0 ? 188 : 189;
+    players[p.id] = { hand: other.splice(0, 5), deck: other, discard: [], progress, inPlay: [], grid: starting ? { [progressCell]: [starting] } : {}, selected: null };
   }
   return { players, turn: Object.keys(players)[0], step: 0, log: ['Game started.'] };
 }
