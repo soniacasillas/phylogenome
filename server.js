@@ -9,6 +9,37 @@ const io = new Server(httpServer);
 const rooms = new Map();
 app.use(express.static('public'));
 app.get('/health', (_, res) => res.json({ ok: true, rooms: rooms.size }));
+// This server-side proxy avoids browser CORS restrictions and preserves every
+// WordPress taxonomy (including sequencing_generation and conservation-status).
+app.get('/api/cards', async (_, res) => {
+  const base = 'https://phylogenome.omicsuab.org/wp-json/wp/v2/posts?per_page=100&_embed=1';
+  try {
+    const first = await fetch(`${base}&page=1`);
+    if (!first.ok) throw new Error(`WordPress returned ${first.status}`);
+    const pages = Number(first.headers.get('x-wp-totalpages') || 1);
+    const batches = [await first.json()];
+    for (let page = 2; page <= pages; page++) {
+      const response = await fetch(`${base}&page=${page}`);
+      if (!response.ok) throw new Error(`WordPress returned ${response.status}`);
+      batches.push(await response.json());
+    }
+    const cards = batches.flat().map(post => {
+      const terms = Object.fromEntries((post._embedded?.['wp:term'] || []).flat().map(term => [
+        `${term.taxonomy}:${term.name}`, { taxonomy: term.taxonomy, name: term.name }
+      ]));
+      return {
+        id: `wp-${post.id}`,
+        title: post.title?.rendered?.replace(/<[^>]*>/g, '') || 'Untitled card',
+        image: post._embedded?.['wp:featuredmedia']?.[0]?.source_url || post.jetpack_featured_media_url || '',
+        categories: Object.values(terms).filter(t => t.taxonomy === 'category').map(t => t.name).join(' '),
+        terms: Object.values(terms).map(t => `${t.taxonomy}:${t.name}`).join(' ')
+      };
+    });
+    res.json({ cards, total: cards.length });
+  } catch (error) {
+    res.status(502).json({ error: 'Could not load cards from PhyloGenome WordPress.', detail: error.message });
+  }
+});
 
 const code = () => randomBytes(3).toString('hex').toUpperCase();
 const publicRoom = room => ({ code: room.code, edition: room.edition, players: Object.values(room.players).map(({ deck, ...p }) => p), started: room.started });
