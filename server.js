@@ -5,19 +5,24 @@ import { randomBytes } from 'node:crypto';
 
 const app = express(), httpServer = createServer(app), io = new Server(httpServer);
 const rooms = new Map();
+let cardCatalogueCache = null;
 app.use(express.static('public'));
 app.use('/assets', express.static('assets'));
 app.get('/health', (_, res) => res.json({ ok: true, rooms: rooms.size }));
 app.get('/api/cards', async (_, res) => {
+  if (cardCatalogueCache && cardCatalogueCache.expires > Date.now()) return res.json(cardCatalogueCache.data);
   const base = 'https://phylogenome.omicsuab.org/wp-json/wp/v2/posts?per_page=100&_embed=1';
   try {
     const first = await fetch(`${base}&page=1`); if (!first.ok) throw new Error(`WordPress returned ${first.status}`);
     const pages = Number(first.headers.get('x-wp-totalpages') || 1), batches = [await first.json()];
     for (let page = 2; page <= pages; page++) { const r = await fetch(`${base}&page=${page}`); if (!r.ok) throw new Error(`WordPress returned ${r.status}`); batches.push(await r.json()); }
-    res.json({ cards: batches.flat().map(post => {
+    const data={ cards: batches.flat().map(post => {
       const terms = Object.values(Object.fromEntries((post._embedded?.['wp:term'] || []).flat().map(t => [`${t.taxonomy}:${t.name}`, t])));
-      return { id:`wp-${post.id}`, title:post.title?.rendered?.replace(/<[^>]*>/g,'') || 'Untitled card', image:post._embedded?.['wp:featuredmedia']?.[0]?.source_url || post.jetpack_featured_media_url || '', categories:terms.filter(t=>t.taxonomy==='category').map(t=>t.name).join(' '), terms:terms.map(t=>`${t.taxonomy}:${t.name}`).join(' | ') };
-    }), total:batches.flat().length });
+      const media=post._embedded?.['wp:featuredmedia']?.[0], sizes=media?.media_details?.sizes || {};
+      const image=sizes.large?.source_url || sizes.medium_large?.source_url || media?.source_url || post.jetpack_featured_media_url || '';
+      return { id:`wp-${post.id}`, title:post.title?.rendered?.replace(/<[^>]*>/g,'') || 'Untitled card', image, categories:terms.filter(t=>t.taxonomy==='category').map(t=>t.name).join(' '), terms:terms.map(t=>`${t.taxonomy}:${t.name}`).join(' | ') };
+    }), total:batches.flat().length };
+    cardCatalogueCache={data,expires:Date.now()+5*60*1000}; res.json(data);
   } catch (error) { res.status(502).json({ error:'Could not load cards from PhyloGenome WordPress.', detail:error.message }); }
 });
 
