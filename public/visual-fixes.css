@@ -25,3 +25,25 @@
 .grid .count { top: auto; right: auto; left: 0; bottom: 0; width: 33.333%; aspect-ratio: 1 / 1; padding: 0 0 3px 3px; border-radius: 0; background: #c9c9c9; color: #111; clip-path: polygon(0 0, 100% 100%, 0 100%); display: flex; align-items: flex-end; justify-content: flex-start; font-size: 12px; font-weight: 900; line-height: 1; z-index: 6; }
 .game-card:not(.own-card), .modal-cards .card:not(.own-card) { border-color: transparent; box-shadow: none; }
 
+
+
+/* Compact, accessible black link icons. */
+header { display: flex; align-items: center; }
+header .social-icons { margin-left: auto; }
+.social-icons { display: flex; align-items: center; justify-content: center; gap: 9px; }
+.icon-link { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; padding: 3px !important; border: 0 !important; border-radius: 50%; background: transparent !important; color: #111 !important; box-shadow: none !important; }
+.icon-link:hover, .icon-link:focus-visible { background: #e5e5e5 !important; color: #111 !important; outline: 1px solid #777; }
+.icon-link svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.icon-link svg .filled { fill: currentColor; stroke: none; }
+.help-trigger { cursor: pointer; }
+footer { display: flex; justify-content: center; }
+
+.platform-help { max-width: 720px; max-height: min(74vh, 760px); overflow-y: auto; padding-right: 8px; line-height: 1.48; }
+.platform-help h2 { margin-top: 0; }
+.platform-help h3 { margin: 1.25em 0 .35em; }
+.platform-help p { margin: .5em 0; }
+.platform-help ul { margin: .45em 0; padding-left: 1.25em; }
+.platform-help li { margin: .28em 0; }
+
+/* The turn guide remains dark, while its action is visibly clickable. */
+.help:not(.waiting) button { background: #777 !important; border-color: #aaa !important; color: #fff !important; }
