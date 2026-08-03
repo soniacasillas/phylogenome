@@ -112,3 +112,52 @@ new MutationObserver(() => requestAnimationFrame(() => {
   if (countButton) { countButton.textContent = 'Count points'; countButton.classList.remove('secondary'); }
 })).observe(app, { childList: true, subtree: true });
 
+
+
+/* Platform help and deck-completion feedback. */
+function showPlatformHelp() {
+  modalBody.innerHTML = `
+    <section class="platform-help">
+      <h2>How to play PhyloGenome online</h2>
+      <p><strong>1. Create or join a room.</strong> One player creates a room, selects Genome Edition or Extinction Edition, and shares the room code with their opponent. The other player joins using that code.</p>
+      <p><strong>2. Build your deck.</strong> Each player selects the required number of cards in every category shown in <em>Your deck</em>. You can choose cards yourself or use <em>Random select</em>. Click <em>Deck ready</em> only after every category is complete. When both players are ready, the game table opens automatically.</p>
+      <p><strong>3. Play from your own side of the table.</strong> Each player sees the board from their own perspective: their cards face them, while the opponent’s cards are rotated. Your cards have a red corner tab at the lower-right corner. A grey tab at the lower-left of a board cell shows how many cards are stacked there.</p>
+      <h3>The game table</h3>
+      <p>The left-hand piles are your draw pile, discard pile, progress cards and cards in play. Your hand is along the bottom. The opponent’s piles are on the right. The central 20 × 20 board is where species and event cards are placed; the two central reserved cells hold the players’ progress cards.</p>
+      <h3>Card actions</h3>
+      <ul>
+        <li><strong>Draw</strong>: move a card to your hand. Drawing from your draw pile takes one random card; drawing from another visible pile lets you choose.</li>
+        <li><strong>Discard</strong>: move a card to its owner’s discard pile. On an ordinary board cell, this affects the cards stacked in that cell.</li>
+        <li><strong>Play</strong>: place a card in <em>Your cards in play</em>.</li>
+        <li><strong>Move</strong>: choose a card or board cell, click <em>Move</em>, then click the destination cell on the board.</li>
+      </ul>
+      <p>Progress cards work differently: from your progress pile they can only be played into your reserved central cell; from that cell they can be returned to your progress pile.</p>
+      <h3>Play together</h3>
+      <p>This platform does not automatically enforce card effects or game actions. Players manage them manually, as with the physical game. We strongly recommend keeping an audio call active so you can describe your actions to your opponent—especially when event cards affect or discard an opponent’s species cards.</p>
+      <h3>Turn guide, Undo and Zoom</h3>
+      <p>The bar at the top shows whose turn it is and the current step. During your turn, click <em>Next</em> after completing each step. It is optional, but helps avoid missed steps and makes an opponent’s turn easier to follow when you are not speaking live. <em>Undo</em> reverses the latest shared action, whether made by you or your opponent. <em>Zoom</em> enlarges or reduces the board view.</p>
+      <h3>Count points</h3>
+      <p><em>Count points</em> can be used at any time. It is a simplified score only and does not use the full scoring system in the printed game rules.</p>
+      <ul>
+        <li><strong>Genome Edition:</strong> first-generation species × 1 + second-generation species × 2 + third-generation species × 3 + the number of different Genomic interest areas among your cards on the board.</li>
+        <li><strong>Extinction Edition:</strong> CR species × 1 + EN species × 2 + VU species × 3 + LC species × 4 + the number of different Threats among your cards on the board.</li>
+      </ul>
+    </section>`;
+  modal.showModal();
+}
+document.querySelectorAll('.help-trigger').forEach(button => button.addEventListener('click', showPlatformHelp));
+
+/* Keep Deck ready available so an incomplete deck can explain what is missing. */
+function refreshDeckReadyButton() {
+  const ready = app.querySelector('#ready');
+  if (ready) ready.disabled = false;
+}
+new MutationObserver(() => requestAnimationFrame(refreshDeckReadyButton)).observe(app, { childList: true, subtree: true });
+document.addEventListener('click', event => {
+  const ready = event.target.closest('#ready');
+  if (!ready || valid()) return;
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  const missing = counts().filter(group => group.got < group.n).map(group => `${group.label}: ${group.got}/${group.n}`);
+  alert(`Complete your deck before selecting Deck ready.\\n\\nStill needed:\\n${missing.join('\\n')}`);
+}, true);
