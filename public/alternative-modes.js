@@ -57,7 +57,9 @@
     <p>Create a room, choose an edition, a game mode and the number of players, then share the room code. Each player selects the required cards and chooses <b>Deck ready</b>. The game starts automatically when every player is ready.</p>
     <h3>PhyloGenome</h3>
     <p>This is the two-player table game. You see your own cards upright, marked with a red corner tab; your opponent sees the table from the opposite perspective. Use the turn guide at the top: start-of-turn actions, draw one card, up to three actions, then end of turn. The platform is a shared table and does not enforce every game rule automatically, so players should discuss their actions aloud.</p>
-    <p>Click cards or piles to use <b>Draw</b>, <b>Discard</b>, <b>Play</b> or <b>Move</b>. <b>Undo</b> reverses the latest shared action, <b>Zoom</b> enlarges the board, and <b>Count points</b> provides the simplified score shown in the app.</p>
+    <p>The grey lower-left corner tab in a board cell shows how many cards are stacked in that cell. Click the cell to inspect the stack.</p>
+    <p>Click cards or piles to use <b>Draw</b> (move a card to your hand), <b>Discard</b> (send it to its owner discard pile), <b>Play</b> (move it to your cards in play), or <b>Move</b>. After choosing <b>Move</b>, the card window closes: click the destination cell in the grid to complete the move. When moving a normal grid cell, its whole stack moves together.</p>
+    <p><b>Undo</b> reverses the latest shared action, <b>Zoom</b> enlarges the board, and <b>Count points</b> provides the simplified score shown in the app.</p>
     <h3>Nature Challenge</h3>
     <p>All players draw one hidden species card. The active player chooses a category. A player holding a card with a higher sequencing generation or conservation-status priority may change that category. Choose <b>Show all cards</b> once the category is agreed, then click the winning card. All revealed cards are added to that player deck, and that player begins the next round. The player with the most cards wins.</p>
     <h3>Timeline</h3>
