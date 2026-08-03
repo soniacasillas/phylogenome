@@ -2,3 +2,5 @@
 
 /* Shared header and footer icons. */
 .social-icons{display:flex;align-items:center;gap:12px}.icon-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;padding:0;background:transparent!important;color:#111!important;border:0!important;outline:0!important;border-radius:0!important;cursor:pointer;text-decoration:none}.icon-link svg{width:21px;height:21px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.icon-link svg .filled{fill:currentColor;stroke:none}.icon-link:hover{color:#d71920!important}.icon-link:focus-visible{outline:2px solid #d71920!important;outline-offset:3px!important}
+
+.site-logos{height:28px;width:auto;max-width:min(300px,48vw);object-fit:contain;margin-left:auto}.social-icons+.site-logos{align-self:center}@media(max-width:600px){footer{justify-content:space-between}.site-logos{height:22px;max-width:60vw}}
