@@ -43,6 +43,7 @@
 .timeline-piles { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:10px; margin:16px 0; }.own-zone { background:#e5e5e5 !important; }
 .timeline-line { display:flex; align-items:center; gap:10px; overflow-x:auto; min-height:300px; padding:24px 12px; border:2px solid #bbb; border-radius:10px; background:#fff; }
 .timeline-line .play-card,.timeline-line .card-back { flex:0 0 160px; width:160px; }.timeline-slot { flex:0 0 42px; width:42px; height:42px; border-radius:50%; padding:0; font-size:1.5rem; background:#777; }.timeline-slot:disabled { opacity:.35; cursor:default; }
+.timeline-card { flex:0 0 160px; width:160px; padding:0; background:#fff; border:0; cursor:pointer; }.timeline-card .play-card { width:100%; }.timeline-card:hover { outline:3px solid #111; }
 .pending-card { outline:5px solid #111; }.timeline-peek { width:min(300px,100%); margin:20px auto; text-align:center; }.timeline-peek h2 { margin-bottom:8px; }
 .partial-card { width:100%; aspect-ratio:1313 / 919; overflow:hidden; background:#fff; border:2px solid #bbb; }.partial-card img { height:auto; min-height:100%; object-fit:cover; object-position:top; }
 @media(max-width:700px){.mode-picker{grid-template-columns:1fr}.nature-table{grid-template-columns:repeat(2,minmax(0,1fr))}.timeline-line .play-card,.timeline-line .card-back{flex-basis:115px;width:115px}.timeline-slot{flex-basis:32px;width:32px;height:32px}}
