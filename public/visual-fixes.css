@@ -33,6 +33,7 @@
 .alternative-game { max-width:1500px; margin:0 auto; }.alternative-game .help { display:flex; flex-wrap:wrap; align-items:center; gap:9px; }
 .category-buttons { display:flex; flex-wrap:wrap; gap:7px; }.category-buttons button { background:#555; font-size:.82rem; padding:.55em .8em; }
 .category-buttons button.selected-category { background:#d71920; color:#fff; }
+.alternative-game .help > button:not(.secondary) { background:#fff; color:#111; outline:1px solid #fff; }
 .nature-table { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:18px; padding:24px 0; align-items:start; }
 .player-pile { border:2px solid #bbb; border-radius:10px; padding:12px; background:#fff; }.player-pile.is-me { background:#e5e5e5; }
 .player-pile h2 { margin:0 0 10px; font-size:1rem; display:flex; justify-content:space-between; gap:5px; }.player-pile small { font-size:.78rem; font-weight:500; }
