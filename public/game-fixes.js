@@ -147,17 +147,20 @@ function showPlatformHelp() {
 }
 document.querySelectorAll('.help-trigger').forEach(button => button.addEventListener('click', showPlatformHelp));
 
-/* Keep Deck ready available so an incomplete deck can explain what is missing. */
+/* Make Deck ready explain incomplete selections without blocking later attempts. */
 function refreshDeckReadyButton() {
   const ready = app.querySelector('#ready');
-  if (ready) ready.disabled = false;
+  if (!ready || ready.dataset.platformReadyHandler) return;
+  const button = ready.cloneNode(true);
+  button.disabled = false;
+  button.dataset.platformReadyHandler = 'yes';
+  ready.replaceWith(button);
+  button.addEventListener('click', () => {
+    if (!valid()) {
+      alert('Complete your deck before selecting Deck ready.');
+      return;
+    }
+    socket.emit('deck:ready', { code: room.code, deck: selection }, () => {});
+  });
 }
 new MutationObserver(() => requestAnimationFrame(refreshDeckReadyButton)).observe(app, { childList: true, subtree: true });
-document.addEventListener('click', event => {
-  const ready = event.target.closest('#ready');
-  if (!ready || valid()) return;
-  event.preventDefault();
-  event.stopImmediatePropagation();
-  const missing = counts().filter(group => group.got < group.n).map(group => `${group.label}: ${group.got}/${group.n}`);
-  alert(`Complete your deck before selecting Deck ready.\\n\\nStill needed:\\n${missing.join('\\n')}`);
-}, true);
